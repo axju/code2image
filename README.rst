@@ -7,6 +7,11 @@ code2image
 
 Create code snippet with pygments and pillow.
 
+.. image:: https://raw.githubusercontent.com/axju/code2image/master/examples/shadow-box.png
+   :scale: 10 %
+   :alt: alternate text
+   :align: right
+
 Install
 -------
 .. code-block:: shell
