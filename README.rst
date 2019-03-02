@@ -66,6 +66,8 @@ Create virtual environment for linux
 
 or create virtual environment for windows
 
+.. code-block:: shell
+
   $ python -m venv venv
   $ venv/Scripts/activate
 
