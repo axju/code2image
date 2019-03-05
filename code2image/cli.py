@@ -14,7 +14,7 @@ def main():
 
     parser.add_argument('--code', type=str, default='#661A0A',
                         help='Code background color')
-    parser.add_argument('--background', type=str, default='#AAAAAA',
+    parser.add_argument('--background', type=str, default='#FFFFFF',
                         help='Image background color')
 
     parser.add_argument('--font-size', type=int, default=16, help='font size')
@@ -30,6 +30,7 @@ def main():
                         help='Shadow offset')
     parser.add_argument('--offset', type=int, default=0, help='Border width')
     parser.add_argument('--blur', type=int, default=5, help='Shadow blur')
+    parser.add_argument('--scale', type=int, default=None, help='A scale')
 
     parser.add_argument('--epilog', type=str,
                         default='\n\n# This image was created with code2image',
@@ -48,6 +49,7 @@ def main():
         'shadow_dt': args.shadow_dt,
         'offset': args.offset,
         'blur': args.blur,
+        'scale': args.scale,
     }
 
     CLS_MAP = {

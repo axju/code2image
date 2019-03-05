@@ -65,8 +65,14 @@ it has also a script for some command line fun.
                           Shadow offset
     --offset OFFSET       Border width
     --blur BLUR           Shadow blur
+    --scale SCALE         A scale
     --epilog EPILOG       A epilog
 
+To create nice images for instagram:
+
+.. code-block:: shell
+
+  $ code2image --kind background --scale 1 /pathe/to/code/file
 
 Python examples
 ---------------
