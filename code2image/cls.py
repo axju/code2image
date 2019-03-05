@@ -122,15 +122,22 @@ class Code2ImageBackground(Code2ImageShadow):
 
     def __init__(self, **kwargs):
         super(Code2ImageBackground, self).__init__(**kwargs)
+        self.scale = kwargs.get('scale', 1)
         self.offset = kwargs.get('offset', 0)
-        self.img_bg = kwargs.get('img_bg', '#AAAAAA')
+        self.img_bg = kwargs.get('img_bg', '#FFFFFF')
 
     def highlight(self, code):
         img = super(Code2ImageBackground, self).highlight(code)
-        m = round(max(img.size)*(1+(self.offset*0.01)))
+        p = 1+(self.offset*0.01)
+        m = tuple([round(max(img.size)*p)]*2)
 
-        background = Image.new("RGB", (m, m), self.img_bg)
+        if self.scale and self.scale > 1:
+            m = tuple([round(img.size[0]*p), round(img.size[1]*self.scale*p)])
+        elif self.scale:
+            m = tuple([round(img.size[0]*p/self.scale), round(img.size[1]*p)])
+
+        background = Image.new("RGB", m, self.img_bg)
         background.paste(
-            img, ((m - img.size[0]) // 2, (m - img.size[1]) // 2), img
+            img, ((m[0] - img.size[0]) // 2, (m[1] - img.size[1]) // 2), img
         )
         return background
