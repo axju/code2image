@@ -1,6 +1,6 @@
 
 from pygments import highlight
-from pygments.lexers import PythonLexer
+from pygments.lexers import get_lexer_for_filename, PythonLexer
 from pygments.formatters import ImageFormatter
 from pygments.styles.monokai import MonokaiStyle
 from PIL import Image, ImageDraw, ImageFilter
@@ -10,13 +10,16 @@ from code2image.util import rounded_rectangle
 
 
 class DefaultStyle(MonokaiStyle):
-    background_color = '#661A0A'
+    code_bg = '#661A0A'
 
 
 class Code2ImageBasic(object):
 
     formatter = None
     lexer = None
+
+    def set_lexer_by_filename(self, filename):
+        self.lexer = get_lexer_for_filename(filename)
 
     def get_formatter(self):
         if not self.formatter:
@@ -31,63 +34,99 @@ class Code2ImageBasic(object):
     def highlight(self, code):
         lexer = self.get_lexer()
         fm = self.get_formatter()
-        return Image.open(BytesIO(highlight(code, lexer(), fm)))
+        return Image.open(BytesIO(highlight(code, lexer, fm)))
 
 
 class Code2Image(Code2ImageBasic):
+    """Create a code box with rounded corners and a customized background"""
 
-    formatter = ImageFormatter(
-        font_name="Liberation Mono", line_pad=10,
-        line_numbers=False, style=DefaultStyle, font_size=25)
-
-    lexer = PythonLexer
-
-    def __init__(self, background_color='#661A0A'):
+    def __init__(self, **kwargs):
         super(Code2Image, self).__init__()
-        self.background_color = background_color
+        self.code_bg = kwargs.get('code_bg', '#661A0A')
+
+        self.formatter = ImageFormatter(
+            font_name="Liberation Mono",
+            line_pad=10,
+            line_numbers=False,
+            style=DefaultStyle,
+            font_size=25
+        )
+        self.lexer = PythonLexer()
+
+        for name, attr in kwargs.items():
+            setattr(self, name, attr)
 
     def get_formatter(self):
         style = DefaultStyle
-        style.background_color = self.background_color
+        style.background_color = self.code_bg
         return ImageFormatter(
-            font_name="Liberation Mono", line_pad=10,
-            line_numbers=False, style=style, font_size=25)
-
-
-class Code2ImageShadow(Code2Image):
-
-    def __init__(self, **kwargs):
-        super(Code2ImageShadow, self).__init__(
-            kwargs.get('code_bg', '#661A0A')
+            font_name="Liberation Mono",
+            line_pad=10,
+            line_numbers=False,
+            style=style,
+            font_size=25
         )
-        self.img_bg = kwargs.get('img_bg', '#AAAAAA')
-        self.shadow_dt = kwargs.get('shadow_dt', 4)
-        self.shadow_color = kwargs.get('shadow_color', '#111111')
-        self.offset = kwargs.get('offset', 10)
-        self.blur = kwargs.get('blur', 20)
 
     def highlight(self, code):
         img = super(Code2Image, self).highlight(code)
-        m = round(max(img.size)*(1+(self.offset*0.01)))
-
-        dt = round(m*self.shadow_dt*0.01)
-        blur = round(m*self.blur*0.002)
-
-        box = (
-            ((m-img.size[0]*1.03)//2, (m-img.size[1]*1.03)//2),
-            ((m+img.size[0]*1.03)//2, (m+img.size[1]*1.03)//2)
+        m = tuple([round(s*1.03) for s in img.size])
+        background = Image.new("RGBA", m)
+        draw = ImageDraw.Draw(background)
+        rounded_rectangle(draw, ((0, 0), m), 20, fill=self.code_bg)
+        background.paste(
+            img, ((m[0] - img.size[0]) // 2, (m[1] - img.size[1]) // 2)
         )
+        return background
 
-        background = Image.new("RGB", (m, m), self.img_bg)
+
+class Code2ImageShadow(Code2Image):
+    """Add a shadow to the code box"""
+
+    def __init__(self, **kwargs):
+        super(Code2ImageShadow, self).__init__(**kwargs)
+        self.shadow_dt = kwargs.get('shadow_dt', 2)
+        self.shadow_color = kwargs.get('shadow_color', '#111111')
+        self.blur = kwargs.get('blur', 5)
+
+    def highlight(self, code):
+        img = super(Code2ImageShadow, self).highlight(code)
+        t = max(img.size)
+        m = tuple(
+            [round(s+t*(self.shadow_dt*0.03+self.blur*0.01)) for s in img.size]
+        )
+        box = (
+            ((m[0]-img.size[0])//2, (m[1]-img.size[1])//2),
+            ((m[0]+img.size[0])//2, (m[1]+img.size[1])//2)
+        )
+        dt = round(m[0]*self.shadow_dt*0.01)
+        blur = round(m[0]*self.blur*0.002)
+
+        background = Image.new("RGBA", m)
         draw = ImageDraw.Draw(background)
         rounded_rectangle(
             draw, ((box[0][0]+dt, box[0][1]+dt), (box[1][0]+dt, box[1][1]+dt)),
             20, fill=self.shadow_color
         )
         background = background.filter(ImageFilter.GaussianBlur(blur))
+        background.paste(
+            img, ((m[0] - img.size[0]) // 2, (m[1] - img.size[1]) // 2), img
+        )
+        return background
 
-        draw = ImageDraw.Draw(background)
-        rounded_rectangle(draw, box, 20, fill=self.background_color)
 
-        background.paste(img, ((m - img.size[0]) // 2, (m - img.size[1]) // 2))
+class Code2ImageBackground(Code2ImageShadow):
+
+    def __init__(self, **kwargs):
+        super(Code2ImageBackground, self).__init__(**kwargs)
+        self.offset = kwargs.get('offset', 0)
+        self.img_bg = kwargs.get('img_bg', '#AAAAAA')
+
+    def highlight(self, code):
+        img = super(Code2ImageBackground, self).highlight(code)
+        m = round(max(img.size)*(1+(self.offset*0.01)))
+
+        background = Image.new("RGB", (m, m), self.img_bg)
+        background.paste(
+            img, ((m - img.size[0]) // 2, (m - img.size[1]) // 2), img
+        )
         return background

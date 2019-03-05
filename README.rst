@@ -7,8 +7,7 @@ code2image
 
 Create code snippet with pygments and pillow.
 
-.. image:: https://raw.githubusercontent.com/axju/code2image/master/examples/shadow-box-small.png
-   :align: center
+
 
 Install
 -------
@@ -16,16 +15,21 @@ Install
 
   $ pip install code2image
 
+Basic uses
+----------
+.. code-block:: shell
 
-Command line fun
-----------------
+  $ code2image examples/shadow.py
+
+.. image:: https://raw.githubusercontent.com/axju/code2image/master/examples/shadow.png
+   :align: center
+
 This package was developed to automate some boring image creation process. But
 it has also a script for some command line fun.
 
 .. code-block:: shell
 
   $ code2image --help
-  $ code2image path/to/source/code.py path/to/output/image.png
 
 
 Python examples
@@ -97,5 +101,9 @@ Run some tests
 
 .. code-block:: shell
 
-  $ tox
+  $ flake8 code2image
   $ python setup.py test
+  $ python -m unittest discover -v
+  $ tox
+
+I do not know why, but tox will fail :(

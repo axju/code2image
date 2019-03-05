@@ -1,7 +1,7 @@
-from code2image.cls import Code2ImageShadow
+from os.path import join, dirname
+from code2image.cls import Code2ImageBackground
 
-# only change the class to uses create a shadow box
-c2i = Code2ImageShadow()
+c2i = Code2ImageBackground()
 
 # load the source code from this file
 with open(__file__) as f:
@@ -11,4 +11,4 @@ with open(__file__) as f:
 img = c2i.highlight(code)
 
 # save the image
-img.save('shadow-box.png')
+img.save(join(dirname(__file__), 'background.png'))

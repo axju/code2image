@@ -1,7 +1,7 @@
 from os.path import join, dirname
-from code2image.cls import Code2Image
+from code2image.cls import Code2ImageShadow
 
-c2i = Code2Image()
+c2i = Code2ImageShadow()
 
 # load the source code from this file
 with open(__file__) as f:
@@ -11,4 +11,4 @@ with open(__file__) as f:
 img = c2i.highlight(code)
 
 # save the image
-img.save(join(dirname(__file__), 'simple.png'))
+img.save(join(dirname(__file__), 'shadow.png'))
