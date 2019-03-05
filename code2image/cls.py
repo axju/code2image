@@ -43,13 +43,17 @@ class Code2Image(Code2ImageBasic):
     def __init__(self, **kwargs):
         super(Code2Image, self).__init__()
         self.code_bg = kwargs.get('code_bg', '#661A0A')
+        self.font_size = kwargs.get('font_size', 16)
+        self.font_name = kwargs.get('font_name', 'Liberation Mono')
+        self.line_pad = kwargs.get('line_pad', 5)
+        self.line_numbers = kwargs.get('line_numbers', False)
 
         self.formatter = ImageFormatter(
-            font_name="Liberation Mono",
-            line_pad=10,
-            line_numbers=False,
+            font_size=self.font_size,
+            font_name=self.font_name,
+            line_pad=self.line_pad,
+            line_numbers=self.line_numbers,
             style=DefaultStyle,
-            font_size=25
         )
         self.lexer = PythonLexer()
 
@@ -60,11 +64,11 @@ class Code2Image(Code2ImageBasic):
         style = DefaultStyle
         style.background_color = self.code_bg
         return ImageFormatter(
-            font_name="Liberation Mono",
-            line_pad=10,
-            line_numbers=False,
+            font_size=self.font_size,
+            font_name=self.font_name,
+            line_pad=self.line_pad,
+            line_numbers=self.line_numbers,
             style=style,
-            font_size=25
         )
 
     def highlight(self, code):
