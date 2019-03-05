@@ -73,10 +73,10 @@ class Code2Image(Code2ImageBasic):
 
     def highlight(self, code):
         img = super(Code2Image, self).highlight(code)
-        m = tuple([round(s*1.03) for s in img.size])
+        m = tuple([round(s*1.035) for s in img.size])
         background = Image.new("RGBA", m)
         draw = ImageDraw.Draw(background)
-        rounded_rectangle(draw, ((0, 0), m), 20, fill=self.code_bg)
+        rounded_rectangle(draw, ((0, 0), m), round(max(img.size)*0.04), fill=self.code_bg)
         background.paste(
             img, ((m[0] - img.size[0]) // 2, (m[1] - img.size[1]) // 2)
         )
