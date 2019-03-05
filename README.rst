@@ -19,7 +19,7 @@ Basic uses
 ----------
 .. code-block:: shell
 
-  $ code2image examples/shadow.py
+  $ python examples/shadow.py
 
 .. image:: https://raw.githubusercontent.com/axju/code2image/master/examples/shadow.png
    :align: center
@@ -30,6 +30,42 @@ it has also a script for some command line fun.
 .. code-block:: shell
 
   $ code2image --help
+  usage: code2image [-h] [--kind {simple,shadow,background}]
+                    [--imagename IMAGENAME] [--code CODE]
+                    [--background BACKGROUND] [--font-size FONT_SIZE]
+                    [--font-name FONT_NAME] [--line_pad LINE_PAD]
+                    [--line-numbers] [--shadow-color SHADOW_COLOR]
+                    [--shadow-dt SHADOW_DT] [--offset OFFSET] [--blur BLUR]
+                    [--epilog EPILOG]
+                    codefile
+
+  Create nice code snippets
+
+  positional arguments:
+    codefile              The code file
+
+  optional arguments:
+    -h, --help            show this help message and exit
+    --kind {simple,shadow,background}
+                          Change the result
+    --imagename IMAGENAME
+                          The output image
+    --code CODE           Code background color
+    --background BACKGROUND
+                          Image background color
+    --font-size FONT_SIZE
+                          font size
+    --font-name FONT_NAME
+                          font name
+    --line_pad LINE_PAD   line pad
+    --line-numbers        line numbers
+    --shadow-color SHADOW_COLOR
+                          Shadow color
+    --shadow-dt SHADOW_DT
+                          Shadow offset
+    --offset OFFSET       Border width
+    --blur BLUR           Shadow blur
+    --epilog EPILOG       A epilog
 
 
 Python examples
@@ -68,8 +104,6 @@ Create virtual environment for linux
 
   $ python3 -m venv venv
   $ source venv/bin/activate
-
-.. code-block:: shell
 
 or create virtual environment for windows
 
